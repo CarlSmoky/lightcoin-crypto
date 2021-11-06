@@ -8,17 +8,15 @@ class Transaction {
   }
 
   commit() {
-    this.account.balance += this.value;
+    // Keep track of the time of the transaction
+    this.time = new Date();
+    // Add the transaction to the account
+    this.account.addTransaction(this);
   }
 
 }
 
 class Deposit extends Transaction {
-
-  // Update the balance in the account
-  // commit() {
-  //   this.account.balance += this.amount;
-  // }
 
   get value() {
     return this.amount;
@@ -27,24 +25,29 @@ class Deposit extends Transaction {
 
 class Withdrawal extends Transaction {
 
-  // Update the balance in the account
-  // commit() {
-  //   this.account.balance -= this.amount;
-  // }
-
   get value() {
     return -this.amount;
   }
-
 }
-
 
 class Account {
 
   constructor(username) {
     this.username = username;
-    // Have the account balance start at $0 since that makes more sense.
-    this.balance = 0;
+    this.transactions = [];
+  }
+
+  get balance() {
+    // Calculate the balance using the transaction objects.
+    let balance = 0;
+    for (let t of this.transactions) {
+      balance += t.value;
+    }
+    return balance;
+  }
+
+  addTransaction(transaction) {
+    this.transactions.push(transaction);
   }
 
 }
@@ -59,7 +62,6 @@ console.log('Transaction 1:', t1);
 t2 = new Withdrawal(50.25, myAccount);
 t2.commit();
 console.log('Transaction 2:', t2);
-console.log(myAccount);
 
 t3 = new Withdrawal(9.99, myAccount);
 t3.commit();
